@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main>
+    <h2 class="mb-4">Admin Dashboard</h2>
+
+    <!-- ── Categories ───────────────────────────────────── -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Categories</h5>
+            <a th:href="@{/admin/categories/new}" class="btn btn-sm btn-success">+ New Category</a>
+        </div>
+        <div class="card-body p-0">
+            <div th:if="${#lists.isEmpty(categories)}" class="p-3 text-muted">No categories yet.</div>
+            <table class="table table-sm mb-0" th:unless="${#lists.isEmpty(categories)}">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cat : ${categories}">
+                    <td th:text="${cat.id}">0</td>
+                    <td th:text="${cat.name}">Category</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── Products ─────────────────────────────────────── -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Products</h5>
+            <a th:href="@{/admin/products/new}" class="btn btn-sm btn-success">+ New Product</a>
+        </div>
+        <div class="card-body p-0">
+            <div th:if="${products.empty}" class="p-3 text-muted">No products yet.</div>
+            <div class="table-responsive" th:unless="${products.empty}">
+                <table class="table table-sm mb-0 align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Active</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${products.content}">
+                        <td th:text="${product.id}">0</td>
+                        <td th:text="${product.name}">Name</td>
+                        <td th:text="${product.category.name}">Category</td>
+                        <td th:text="'$' + ${product.price}">$0.00</td>
+                        <td th:text="${product.stockQty}">0</td>
+                        <td>
+                            <span th:if="${product.isActive}" class="badge bg-success">Active</span>
+                            <span th:unless="${product.isActive}" class="badge bg-secondary">Inactive</span>
+                        </td>
+                        <td class="d-flex gap-1">
+                            <a th:href="@{/admin/products/{id}/edit(id=${product.id})}"
+                               class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form th:if="${product.isActive}"
+                                  th:action="@{/admin/products/{id}/deactivate(id=${product.id})}"
+                                  method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-warning"
+                                        onclick="return confirm('Deactivate this product?')">
+                                    Deactivate
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Recent Orders ────────────────────────────────── -->
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Recent Orders</h5>
+            <a th:href="@{/admin/orders}" class="btn btn-sm btn-outline-secondary">View All Orders</a>
+        </div>
+        <div class="card-body p-0">
+            <div th:if="${orders.empty}" class="p-3 text-muted">No orders yet.</div>
+            <div class="table-responsive" th:unless="${orders.empty}">
+                <table class="table table-sm mb-0 align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders.content}">
+                        <td th:text="${order.id}">0</td>
+                        <td th:text="${order.customer.name}">Customer</td>
+                        <td th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${order.status.name() == 'NEW' ? 'bg-primary' : (order.status.name() == 'FULFILLED' ? 'bg-success' : 'bg-danger')}"
+                                  th:text="${order.status}">Status</span>
+                        </td>
+                        <td th:text="'$' + ${order.total}">$0.00</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

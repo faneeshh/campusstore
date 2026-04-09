@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main>
+    <h2 class="mb-4">New Order</h2>
+
+    <div th:if="${products.empty}" class="alert alert-info">
+        No active in-stock products are currently available.
+    </div>
+
+    <form th:action="@{/orders}" method="post" th:unless="${products.empty}">
+        <div class="table-responsive mb-3">
+            <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Available</th>
+                    <th style="width:110px">Quantity</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${products.content}">
+                    <td>
+                        <input type="hidden" name="productIds[]" th:value="${product.id}">
+                        <span th:text="${product.name}">Product</span>
+                    </td>
+                    <td th:text="${product.category.name}">Category</td>
+                    <td th:text="'$' + ${product.price}">$0.00</td>
+                    <td th:text="${product.stockQty}">0</td>
+                    <td>
+                        <input type="number" name="quantities[]"
+                               min="0" th:max="${product.stockQty}" value="0"
+                               class="form-control form-control-sm">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success">Place Order</button>
+            <a th:href="@{/catalog}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

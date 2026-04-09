@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main>
+    <a th:href="@{/orders/history}" class="btn btn-link ps-0 mb-3">&larr; Back to History</a>
+
+    <h2 class="mb-3">Order #<span th:text="${order.id}">0</span></h2>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <p class="mb-1">
+                <strong>Date:</strong>
+                <span th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</span>
+            </p>
+            <p class="mb-1">
+                <strong>Status:</strong>
+                <span class="badge"
+                      th:classappend="${order.status.name() == 'NEW' ? 'bg-primary' : (order.status.name() == 'FULFILLED' ? 'bg-success' : 'bg-danger')}"
+                      th:text="${order.status}">Status</span>
+            </p>
+            <p class="mb-0">
+                <strong>Total:</strong>
+                <span class="fw-bold" th:text="'$' + ${order.total}">$0.00</span>
+            </p>
+        </div>
+    </div>
+
+    <h5>Items</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-light">
+            <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.product.name}">Product</td>
+                <td th:text="${item.qty}">1</td>
+                <td th:text="'$' + ${item.unitPrice}">$0.00</td>
+                <td th:text="'$' + ${item.unitPrice.multiply(new java.math.BigDecimal(item.qty))}">$0.00</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a th:href="@{/orders/history}" class="btn btn-outline-secondary mt-2">Back to History</a>
+</main>
+</body>
+</html>

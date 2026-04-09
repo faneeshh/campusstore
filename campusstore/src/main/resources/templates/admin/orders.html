@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main>
+    <h2 class="mb-4">All Orders</h2>
+
+    <div th:if="${orders.empty}" class="text-muted fst-italic">No orders found.</div>
+
+    <div class="table-responsive" th:unless="${orders.empty}">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Update Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders.content}">
+                <td th:text="${order.id}">0</td>
+                <td th:text="${order.customer.name}">Customer</td>
+                <td th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${order.status.name() == 'NEW' ? 'bg-primary' : (order.status.name() == 'FULFILLED' ? 'bg-success' : 'bg-danger')}"
+                          th:text="${order.status}">Status</span>
+                </td>
+                <td th:text="'$' + ${order.total}">$0.00</td>
+                <td>
+                    <form th:if="${order.status.name() == 'NEW'}"
+                          th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                          method="post"
+                          class="d-flex gap-2 align-items-center">
+                        <select name="status" class="form-select form-select-sm" style="width:auto">
+                            <option value="FULFILLED">Fulfilled</option>
+                            <option value="CANCELLED">Cancelled</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </form>
+                    <span th:unless="${order.status.name() == 'NEW'}" class="text-muted small">—</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Orders pages" th:unless="${orders.empty}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${!orders.hasPrevious()} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/orders(page=${orders.number - 1},size=${orders.size})}">
+                    &laquo; Previous
+                </a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"
+                      th:text="'Page ' + ${orders.number + 1} + ' of ' + ${orders.totalPages}">
+                    Page 1
+                </span>
+            </li>
+            <li class="page-item" th:classappend="${!orders.hasNext()} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/orders(page=${orders.number + 1},size=${orders.size})}">
+                    Next &raquo;
+                </a>
+            </li>
+        </ul>
+    </nav>
+</main>
+</body>
+</html>

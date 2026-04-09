@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main>
+    <div class="text-center py-5">
+        <h1 class="display-1 text-warning">&#9888;</h1>
+        <h2 class="mb-3">Something went wrong.</h2>
+        <p class="lead text-muted">An unexpected error occurred. Please try again later.</p>
+        <a th:href="@{/catalog}" class="btn btn-primary mt-2">Back to Home</a>
+    </div>
+</main>
+</body>
+</html>

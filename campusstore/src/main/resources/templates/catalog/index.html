@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<main>
+    <h2 class="mb-4">Product Catalog</h2>
+
+    <!-- Filter Form -->
+    <form th:action="@{/catalog}" method="get" class="row g-2 mb-4 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" name="name" placeholder="Search by name"
+                   th:value="${name}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="categoryId">
+                <option value="">All Categories</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.id}"
+                        th:text="${cat.name}"
+                        th:selected="${cat.id == categoryId}">Category</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Sort By</label>
+            <select class="form-select" name="sortBy">
+                <option value="name"  th:selected="${sortBy == 'name'}">Name</option>
+                <option value="price" th:selected="${sortBy == 'price'}">Price</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">Dir</label>
+            <select class="form-select" name="sortDir">
+                <option value="asc"  th:selected="${sortDir == 'asc'}">Asc</option>
+                <option value="desc" th:selected="${sortDir == 'desc'}">Desc</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end gap-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="inStock" value="true"
+                       id="inStock" th:checked="${inStock}">
+                <label class="form-check-label" for="inStock">In Stock Only</label>
+            </div>
+        </div>
+        <div class="col-md-1 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
+
+    <!-- Empty State -->
+    <div th:if="${products.empty}" class="text-muted fst-italic">No results on this page.</div>
+
+    <!-- Product Grid -->
+    <div class="row" th:unless="${products.empty}">
+        <div class="col-md-4 mb-4" th:each="product : ${products.content}">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a th:href="@{/products/{id}(id=${product.id})}"
+                           th:text="${product.name}" class="text-decoration-none">Product</a>
+                    </h5>
+                    <p class="text-muted small mb-2" th:text="${product.category.name}">Category</p>
+                    <p class="fw-bold mb-2" th:text="'$' + ${product.price}">$0.00</p>
+                    <span th:if="${product.stockQty == 0}" class="badge bg-secondary">Out of Stock</span>
+                    <span th:if="${product.stockQty > 0}" class="badge bg-success"
+                          th:text="${product.stockQty} + ' in stock'">In Stock</span>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a th:href="@{/products/{id}(id=${product.id})}"
+                       class="btn btn-sm btn-outline-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Product pages">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${!products.hasPrevious()} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/catalog(page=${products.number - 1},name=${name},categoryId=${categoryId},inStock=${inStock},sortBy=${sortBy},sortDir=${sortDir},size=${pageSize})}">
+                    &laquo; Previous
+                </a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"
+                      th:text="'Page ' + ${products.number + 1} + ' of ' + (${products.totalPages == 0 ? 1 : products.totalPages})">
+                    Page 1
+                </span>
+            </li>
+            <li class="page-item" th:classappend="${!products.hasNext()} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/catalog(page=${products.number + 1},name=${name},categoryId=${categoryId},inStock=${inStock},sortBy=${sortBy},sortDir=${sortDir},size=${pageSize})}">
+                    Next &raquo;
+                </a>
+            </li>
+        </ul>
+    </nav>
+</main>
+</body>
+</html>
