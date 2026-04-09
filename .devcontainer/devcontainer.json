@@ -1,0 +1,16 @@
+{
+  "name": "Campus Store",
+  "image": "mcr.microsoft.com/devcontainers/java:21",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y maven mariadb-server && sudo service mariadb start && sudo mariadb -e \"CREATE DATABASE IF NOT EXISTS campusstore; ALTER USER 'root'@'localhost' IDENTIFIED BY 'root'; FLUSH PRIVILEGES;\"",
+  "postStartCommand": "sudo service mariadb start",
+  "forwardPorts": [8080, 3306],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vmware.vscode-spring-boot",
+        "vscjava.vscode-java-pack",
+        "GitHub.copilot"
+      ]
+    }
+  }
+}
